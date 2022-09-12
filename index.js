@@ -24,7 +24,7 @@ numberButtons.forEach(button => { //Add numbers to calculation
         amountOfNumbers ++;
 
         if (clearOnInput) {
-            clearDisplays();
+            clear();
         }
 
         let numberToAdd = parseInt(button.innerHTML);
@@ -75,7 +75,7 @@ functionButtons.forEach(button => { //Handle function buttons
                 if (!clearOnInput) calculate();
                 break;
             case 'C': 
-                clearDisplays();
+                clear();
                 break;
             case 'DEL':
                 removePosition();
@@ -113,7 +113,7 @@ function updateDisplay() {
     });
     display.innerHTML = str;
 }
-function clearDisplays() {
+function clear() {
     numbers = [0];
     operators = [];
     displayText = ['0'];
@@ -126,7 +126,7 @@ function clearDisplays() {
     const resultDisplay = document.getElementById('result-display');
     display.innerHTML = displayText[0]; 
     resultDisplay.innerHTML = '0'; 
-    console.log('Displays Cleared');
+    console.log('Cleared');
 }
 function removePosition() {
     if (numbers[0] === 0) return;
@@ -135,7 +135,7 @@ function removePosition() {
         operators.pop();
         displayText.pop();
         previousIsOperator = false;
-        console.log('operator removed');
+        console.log('Operator removed');
     } else {
         let lastPos = numbers.length-1;
         if (numbers[lastPos] < 10) {
@@ -144,7 +144,7 @@ function removePosition() {
                 displayText.pop();
                 previousIsOperator = false;
             } else {
-                clearDisplays();
+                clear();
                 previousIsOperator = false;    
             }
         } else {
@@ -156,7 +156,7 @@ function removePosition() {
             }
         }
         amountOfNumbers --;
-        console.log('number removed');
+        console.log('Number removed');
     }
     updateDisplay(); 
 }
