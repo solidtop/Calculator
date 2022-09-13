@@ -4,8 +4,8 @@ const functionButtons = document.querySelectorAll('[data-function]');
 
 const formatter = new Intl.NumberFormat('se');
 
-const maxAmountOfNumbers = 8;
-let amountOfNumbers = 0;
+const maxAmountOfNumbers = 9;
+let amountOfNumbers = 1;
 
 let numbersAdded = [];
 let numbers = [0];
@@ -21,25 +21,26 @@ let clearOnInput = false;
 numberButtons.forEach(button => { //Add numbers to calculation
     button.addEventListener('click', function() {
         if (amountOfNumbers > maxAmountOfNumbers) return;
-        if (numbers[numbers.length] === 0 && numberToAdd === 0) return; //Exit early if 0 has duplicates
+        if (numbers[numbers.length] === 0 && numberToAdd === 0) return; //Exit early if user is adding 0 to 0 (it's useless)
         amountOfNumbers ++;
 
         if (clearOnInput) {
             clear();
         }
 
-        let numberToAdd = parseInt(button.innerHTML);
-        numbersAdded.push(numberToAdd); //save added number for later
+        let numberToAdd = parseInt(button.innerHTML); //Convert button name to number
+        numbersAdded.push(numberToAdd); //save number for later
         let lastPos = numbers.length - 1;
 
-        if (previousIsOperator) {
+        if (previousIsOperator) { //Add first number after operator
             numbers.push(numberToAdd);
             displayText.push(numberToAdd);
             previousIsOperator = false;
-        } else {  
+        } else {   //Increase current number 
             if (isDecimal) {
                 decimalPos ++;
                 numbers[lastPos] = numbers[lastPos] + numberToAdd / 10 ** decimalPos; 
+                //Seperate format for decimals
                 displayText[displayText.length-1] = numbers[lastPos].toLocaleString('se-SV', {minimumFractionDigits: decimalPos});
             } else {
                 numbers[lastPos] = numbers[lastPos] * 10 + numberToAdd;
@@ -47,7 +48,7 @@ numberButtons.forEach(button => { //Add numbers to calculation
             }
         } 
         updateDisplay(); 
-        console.log(numbers);
+        console.log(numberToAdd);
     });   
 });
 operatorButtons.forEach(button => { //Add operators to calculation
@@ -60,8 +61,6 @@ operatorButtons.forEach(button => { //Add operators to calculation
             displayText[0] = numbers[0];
             updateDisplay();
         }
-        console.log(isDecimal);
-
         if (button.innerHTML === ',') { //Decimal operator
             if (isDecimal) return;
             isDecimal = true;
@@ -98,22 +97,24 @@ functionButtons.forEach(button => { //Handle function buttons
 
 function calculate() {
     if (operators.length < 1) return;
-    if (numbers.length < 2) numbers[1] = numbers[0]; //if only one number exists, calculate itself
-
-    result = numbers[0];
+    if (numbers.length === 1) {
+        numbers[1] = numbers[0]; //if only one number exists, calculate itself
+    }
+    let sum = numbers[0];
     let operator = '';
     for (let i = 1; i < numbers.length; i++) {
         operator = operators[i-1];
         switch(operator) {
-            case '+': result += numbers[i]; break;
-            case '-': result -= numbers[i]; break;
-            case '÷': result /= numbers[i]; break;
-            case 'x': result *= numbers[i]; break;
-            case '^': result **= numbers[i]; break;
-            case '%': result %= numbers[i]; break;
+            case '+': sum += numbers[i]; break;
+            case '-': sum -= numbers[i]; break;
+            case '÷': sum /= numbers[i]; break;
+            case 'x': sum *= numbers[i]; break;
+            case '^': sum **= numbers[i]; break;
+            case '%': sum %= numbers[i]; break;
             default: break;
         }	
     }
+    result = sum;
     showResult(result);
 }
 
@@ -129,7 +130,8 @@ function clear() {
     numbers = [0];
     operators = [];
     displayText = ['0'];
-    amountOfNumbers = 0;
+    numbersAdded = [];
+    amountOfNumbers = 1;
     isDecimal = false;
     decimalPos = 0;
     clearOnInput = false;
@@ -141,7 +143,7 @@ function clear() {
     resultDisplay.innerHTML = '0'; 
     console.log('Cleared');
 }
-function removePosition() {
+function removePosition() { //TODO: Doesn't work correctly with decimal numbers (yet)
     if (previousIsOperator) {
         operators.pop();
         displayText.pop();
@@ -149,8 +151,8 @@ function removePosition() {
         amountOfNumbers = maxAmountOfNumbers; //reset 
         console.log('Operator removed');
     } else {
-        if (numbers[0] === 0 && numbers.length === 1) return;
-
+        numbersAdded.pop();
+        amountOfNumbers --;
         let lastPos = numbers.length-1;
         if (numbers[lastPos] < 10) {
             if (numbers.length > 1) {
@@ -166,8 +168,6 @@ function removePosition() {
             numbers[lastPos] = Math.ceil(numbers[lastPos] / 10) - Math.ceil(previousNumberAdded / 10);
             displayText[displayText.length-1] = formatter.format(numbers[lastPos]);
         }
-        numbersAdded.pop();
-        amountOfNumbers --;
         console.log('Number removed');
     }
     updateDisplay(); 
