@@ -5,7 +5,9 @@ const functionButtons = document.querySelectorAll('[data-function]');
 const formatter = new Intl.NumberFormat('se');
 
 const maxAmountOfNumbers = 9;
+const maxAmountOfOperators = 4;
 let amountOfNumbers = 1;
+let amountOfOperators = 0;
 
 let numbersAdded = [];
 let numbers = [0];
@@ -26,7 +28,7 @@ numberButtons.forEach(button => { //Add numbers to calculation
 
         if (clearOnInput) {
             clear();
-        }
+        } 
 
         let numberToAdd = parseInt(button.innerHTML); //Convert button name to number
         numbersAdded.push(numberToAdd); //save number for later
@@ -54,6 +56,7 @@ numberButtons.forEach(button => { //Add numbers to calculation
 operatorButtons.forEach(button => { //Add operators to calculation
     button.addEventListener('click', function() {
         if (previousIsOperator) return;
+        if (amountOfOperators >= maxAmountOfOperators) return;
 
         if (clearOnInput) {
             clear();
@@ -71,9 +74,10 @@ operatorButtons.forEach(button => { //Add operators to calculation
             displayText.push(button.innerHTML);
             updateDisplay();  
             previousIsOperator = true;
+            amountOfOperators ++;
             isDecimal = false; //reset values
             decimalPos = 0;
-            amountOfNumbers = 0;
+            amountOfNumbers = 1;
         }
     });   
 });
@@ -154,7 +158,9 @@ function removePosition() { //TODO: Doesn't work correctly with decimal numbers 
         numbersAdded.pop();
         amountOfNumbers --;
         let lastPos = numbers.length-1;
-        if (numbers[lastPos] < 10) {
+        isDecimal = !Number.isInteger(numbers[lastPos]);
+        console.log(isDecimal);
+        if (numbers[lastPos] < 10 && !isDecimal) {
             if (numbers.length > 1) {
                 numbers.pop();
                 displayText.pop();
@@ -165,8 +171,14 @@ function removePosition() { //TODO: Doesn't work correctly with decimal numbers 
             }
         } else {
             let previousNumberAdded = numbersAdded[numbersAdded.length-1];
-            numbers[lastPos] = Math.ceil(numbers[lastPos] / 10) - Math.ceil(previousNumberAdded / 10);
-            displayText[displayText.length-1] = formatter.format(numbers[lastPos]);
+            if (!isDecimal) {
+                numbers[lastPos] = Math.ceil(numbers[lastPos] / 10) - Math.ceil(previousNumberAdded / 10);
+                displayText[displayText.length-1] = formatter.format(numbers[lastPos]);
+            } else {
+                numbers[lastPos] = numbers[lastPos] - previousNumberAdded / (10 ** decimalPos);
+                decimalPos --;
+                displayText[displayText.length-1] = numbers[lastPos].toLocaleString('se-SV', {minimumFractionDigits: decimalPos});
+            }
         }
         console.log('Number removed');
     }
