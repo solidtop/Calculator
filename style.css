@@ -3,51 +3,81 @@
     box-sizing: border-box;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-weight: normal;
+    color: white;
+}
+
+:root {
+    --colorBackground: linear-gradient(to right, #121c27, #121e47, #1e3649);
+    --colorBackground2: linear-gradient(to bottom, #ffffff0e, #6ecfcf1e); 
+    --colorBorder: rgba(255, 255, 255, .1);
+
+    --colorButton: rgba(255, 255, 255, .1);
+    --colorButtonHover: rgba(255, 255, 255, .2);
+    --colorButtonActive: rgba(108, 189, 122, 0.07);
+
+    --colorButtonEquals: #4f9cc9;
+    --colorButtonEqualsHover: #76b9e2;
+    --colorButtonEqualsActive: rgba(108, 189, 122, 0.07);
+
+    --colorDisplay: rgba(0, 0, 0, 0.2);
+
+    --border: 2px solid rgba(255, 255, 255, 0.1);
+    --borderRadius: 10px;    
+    --borderRadius2: 5px;    
 }
 
 body {
+    display: flex;
+    justify-content: center;
     padding: 0;
-    margin: 0;
-    background: linear-gradient(to right, #2d2f30, #45584e);
+    margin: 20px;
+    background: var(--colorBackground);
+  
 }
 
 .grid-container {
     display: grid;
     justify-content: center;
-    align-content: center;
-    min-height: 100px;
     grid-template-columns: repeat(4, 100px);
     grid-template-rows: minmax(50px, auto) repeat(5, 100px);
+
+    width: fit-content;
+
+    border: var(--border);
+    border-style: none solid none;
+    border-radius: var(--borderRadius);
+    background: var(--colorBackground2);
+    padding: 10px;
 }
 .grid-container > button {
-    font-size: 25px;
+    font-size: 30px;
     cursor: pointer;
-    background-color: rgba(255, 255, 255, .1);
-    border: 1px solid rgba(255, 255, 255, .1);
+    background-color: var(--colorButton);
+    border: none;
     outline: none;
-    color: white;
+    margin: 2px;
+    border-radius: var(--borderRadius2);
+
 }
 .grid-container>button:hover {
-    animation-duration: 5s;
-    background-color: rgba(255, 255, 255, .2);
+    background-color: var(--colorButtonHover);
 }
 .grid-container>button:active {
-    background-color: rgba(108, 189, 122, 0.07);
+    background-color: var(--colorButtonActive);
 }
 .grid-container>#equals-button {
-    background-color: rgba(111, 231, 121, 0.2);
+    background-color: var(--colorButtonEquals);
 }
 .grid-container>#equals-button:hover {
-    background-color: rgba(255, 255, 255, .2);
+    background-color: var(--colorButtonEqualsHover);
 }
 .grid-container>#equals-button:active {
-    background-color: rgba(108, 189, 122, 0.07);
+    background-color: var(--colorButtonEqualsActive);
 }
-
 
 .displays {
     grid-column: 1 / -1;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: var(--colorDisplay);
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
@@ -55,11 +85,15 @@ body {
     padding: 10px;
     word-wrap: break-word;
     word-break: break-all;
+    margin-bottom: 10px;
+
+    border-radius: var(--borderRadius2);
 }
-.displays>#input-display {
-    color: rgba(255, 255, 255, .75);
+.displays .input-display {
+    color: rgba(255, 255, 255, .7);
+    font-size: 1.2rem;
 }
-.displays>#result-display {
+.displays .result-display {
     color: white;
     font-size: 2.5rem;
 }
