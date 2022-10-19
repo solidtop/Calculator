@@ -48,7 +48,10 @@ functionButtons.forEach(button => {
                 clear();
                 break;
             case 'DEL':
-                remove();
+                if (clearOnInput) 
+                    clear();
+                else 
+                    remove();
                 break;
         }
     });      
@@ -83,18 +86,20 @@ function addNumber(numberToAdd) {
 function addOperator(operator) {
     if (previousIsOperator) return;
 
-    if (operator === ',') {
-        isDecimal = true;
-        injectToDisplay(',');
-        return;
-    } 
-
     if (clearOnInput) {
         clear();
         numbers[0] = result;
         displayText[0] = result;
         updateDisplay();
     }
+
+    if (operator === ',') {
+        if (!isDecimal) {
+            isDecimal = true;
+            injectToDisplay(',');
+        }
+        return;
+    } 
 
     if (operators.length >= MAX_OPERATORS) return;
     amountOfNumbers = 1;
@@ -188,6 +193,8 @@ function clear() {
     document.querySelector('#input-display').innerHTML = '0';
     document.querySelector('#result-display').innerHTML = '0';
 }
+
+
 
 function saveRecord(number = null) {
     record.push({
