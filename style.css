@@ -40,7 +40,6 @@ body {
     justify-content: center;
     grid-template-columns: repeat(4, 100px);
     grid-template-rows: minmax(50px, auto) repeat(5, 100px);
-
     width: fit-content;
 
     border: var(--border);
@@ -48,8 +47,9 @@ body {
     border-radius: var(--borderRadius);
     background: var(--colorBackground2);
     padding: 10px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
 }
-.grid-container > button {
+button {
     font-size: 30px;
     cursor: pointer;
     background-color: var(--colorButton);
@@ -57,21 +57,21 @@ body {
     outline: none;
     margin: 2px;
     border-radius: var(--borderRadius2);
-
 }
-.grid-container>button:hover {
+
+button:hover {
     background-color: var(--colorButtonHover);
 }
-.grid-container>button:active {
+button:active {
     background-color: var(--colorButtonActive);
 }
-.grid-container>#equals-button {
+.equals-button {
     background-color: var(--colorButtonEquals);
 }
-.grid-container>#equals-button:hover {
+.equals-button:hover {
     background-color: var(--colorButtonEqualsHover);
 }
-.grid-container>#equals-button:active {
+.equals-button:active {
     background-color: var(--colorButtonEqualsActive);
 }
 
@@ -89,11 +89,11 @@ body {
 
     border-radius: var(--borderRadius2);
 }
-.displays .input-display {
+.input-display {
     color: rgba(255, 255, 255, .7);
     font-size: 1.2rem;
 }
-.displays .result-display {
+.result-display {
     color: white;
     font-size: 2.5rem;
 }

@@ -1,13 +1,15 @@
-const formatter = new Intl.NumberFormat('se');
-
 const MAX_NUMBERS = 13; //JS goes freakin bananas att high and low number calculations
 const MAX_OPERATORS = 8;
+
+const formatter = new Intl.NumberFormat('se', {
+    maximumSignificantDigits: MAX_NUMBERS,
+});
+
 let amountOfNumbers = 1;
 
-let record = [];
+let historyList = [];
 let caretPos = 0;
 
-let numbersAdded = [];
 let numbers = [0];
 let operators = [];
 let displayText = ['0'];
@@ -16,7 +18,6 @@ let result = 0;
 let previousIsOperator = false;
 let isDecimal = false;
 let decimalPos = 0; 
-
 let clearOnInput = false;
 
 const numberButtons = document.querySelectorAll('[data-number]');
@@ -60,28 +61,27 @@ functionButtons.forEach(button => {
 
 function addNumber(numberToAdd) {
     if (amountOfNumbers >= MAX_NUMBERS) return;
-    if (numbers[numbers.length] === 0 && numberToAdd === 0) return; //WTF
+    if (caretPos === 0 && numberToAdd === 0 && !isDecimal) return; 
 
     if (previousIsOperator) {
-
         numbers.push(numberToAdd);
         displayText.push(numberToAdd);
         previousIsOperator = false;
     
     } else {
-        const lastPos = numbers.length-1;  numbers.at(-1)
+        const pos = numbers.length-1; 
         if (isDecimal) {
             decimalPos ++;
-            numbers[lastPos] = numbers[lastPos] + numberToAdd / 10 ** decimalPos; 
-            displayText[displayText.length-1] = numbers[lastPos].toLocaleString('se-SV', {minimumFractionDigits: decimalPos});
+            numbers[pos] = numbers[pos] + numberToAdd / 10 ** decimalPos; 
+            displayText[displayText.length-1] = formatter.format(numbers[pos]);6
         } else {
-            numbers[lastPos] = numbers[lastPos] * 10 + numberToAdd;
-            displayText[displayText.length-1] = formatter.format(numbers[lastPos]);
+            numbers[pos] = numbers[pos] * 10 + numberToAdd;
+            displayText[displayText.length-1] = formatter.format(numbers[pos]);
         }
     }
-    saveRecord(numberToAdd);
-    updateDisplay();
     amountOfNumbers ++;
+    saveHistory();
+    updateDisplay();
 }
 function addOperator(operator) {
     if (previousIsOperator) return;
@@ -93,7 +93,7 @@ function addOperator(operator) {
         updateDisplay();
     }
 
-    if (operator === ',') {
+    if (operator === ',') { 
         if (!isDecimal) {
             isDecimal = true;
             injectToDisplay(',');
@@ -111,7 +111,7 @@ function addOperator(operator) {
     previousIsOperator = true;
     isDecimal = false;
     decimalPos = 0;
-    saveRecord();
+    saveHistory();
 }
 
 function calculate() {
@@ -136,45 +136,36 @@ function calculate() {
 function remove() {
     if (caretPos === 0) return;
 
-    const previousNumber = record[caretPos-1].numberAdded;  //Get info from record array object
-    decimalPos = record[caretPos-1].decimalPos;
-    removeRecord(); //Remove current record from memory 
+    if (caretPos === 1) {
+        clear();
+        return;
+    }
+    removeHistory();
 
-    if (previousIsOperator) { //Remove operator
+    if (previousIsOperator) {
         operators.pop();
         displayText.pop();
-        updateDisplay(); 
-        amountOfNumbers = MAX_NUMBERS;
-        previousIsOperator = false;
-        return;
-    } 
-    amountOfNumbers --;
-    const lastPos = numbers.length - 1;
-
-    isDecimal = !Number.isInteger(numbers[lastPos]);
-    if (isDecimal) {
-        numbers[lastPos] = numbers[lastPos] - previousNumber / (10 ** decimalPos);
-        displayText[displayText.length-1] = numbers[lastPos].toLocaleString('se-SV', {minimumFractionDigits: decimalPos-1});
-        decimalPos --;
         updateDisplay();
-
-        if (numbers[0] === 0) clear();
+        previousIsOperator = false;
         return;
     }
 
-    if (numbers[lastPos] < 10) {
-        if (numbers.length === 1) {
-            clear();
-            return;
-        }
+    const i = caretPos-1;
+    const number = historyList[i].number; //Get info from historyList
+    const numberPos = historyList[i].numberPos;
+    isDecimal = historyList[i].isDecimal;
+    decimalPos = historyList[i].decimalPos;
+
+    if (numberPos <= 1) {
         numbers.pop();
         displayText.pop();
         previousIsOperator = true;
     } else {
-        numbers[lastPos] = Math.ceil(numbers[lastPos] / 10) - Math.ceil(previousNumber / 10);
-        displayText[displayText.length-1] = formatter.format(numbers[lastPos]);
+        numbers[numbers.length-1] = number;
+        displayText[displayText.length-1] = formatter.format(number);
     }
     updateDisplay();
+   
 }
 
 function clear() {
@@ -188,28 +179,31 @@ function clear() {
     previousIsOperator = false;
     isDecimal = false;
     decimalPos = 0;
-    clearRecord();
+    clearHistory();
 
     document.querySelector('#input-display').innerHTML = '0';
     document.querySelector('#result-display').innerHTML = '0';
 }
 
 
-
-function saveRecord(number = null) {
-    record.push({
-        numberAdded: number,
-        operator: operators.at(-1),
+function saveHistory() {
+    const i = numbers.length - 1;
+    const j = operators.length -1;
+    historyList.push({
+        number: numbers[i],
+        operator: operators[j],
+        numberPos: amountOfNumbers, 
+        isDecimal: isDecimal,
         decimalPos: decimalPos,
     });
-    caretPos = record.length;
+    caretPos = historyList.length;
 }
-function removeRecord() {
-    record.pop();
-    caretPos = record.length;
+function removeHistory() {
+    historyList.pop();
+    caretPos = historyList.length;
 }
-function clearRecord() {
-    record = [];
+function clearHistory() {
+    historyList = [];
     caretPos = 0;
 }
 
@@ -233,3 +227,4 @@ function showResult() {
 }
 
 //#endregion
+
