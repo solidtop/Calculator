@@ -8,7 +8,7 @@ const formatter = new Intl.NumberFormat('se', {
 let amountOfNumbers = 1;
 
 let historyList = [];
-let caretPos = 0;
+let caretPos = 0; //Keeping track of history when deleting/adding numbers
 
 let numbers = [0];
 let operators = [];
@@ -24,7 +24,7 @@ const numberButtons = document.querySelectorAll('[data-number]');
 const operatorButtons = document.querySelectorAll('[data-operator]');
 const functionButtons = document.querySelectorAll('[data-function]');
 
-numberButtons.forEach(button => {
+numberButtons.forEach(button => { //Number buttons
     button.addEventListener('click', e => {
         if (clearOnInput) clear();
 
@@ -33,13 +33,13 @@ numberButtons.forEach(button => {
     })
 });
 
-operatorButtons.forEach(button => {
+operatorButtons.forEach(button => { //Operator buttons
     button.addEventListener('click', e => {
         addOperator(e.target.innerHTML);
     });
 });
 
-functionButtons.forEach(button => {
+functionButtons.forEach(button => { //Function buttons
     button.addEventListener('click', () => {
         switch(button.innerHTML) {
             case '=':
@@ -93,10 +93,10 @@ function addOperator(operator) {
         updateDisplay();
     }
 
-    if (operator === ',') { 
+    if (operator === ',') { //Making next input decimal number
         if (!isDecimal) {
             isDecimal = true;
-            injectToDisplay(',');
+            injectToDisplay(','); //Show "," on display temporary
         }
         return;
     } 
