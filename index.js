@@ -1,7 +1,7 @@
 const MAX_NUMBERS = 13; //JS goes freakin bananas att high and low number calculations
 const MAX_OPERATORS = 8;
 
-const formatter = new Intl.NumberFormat('se', {
+const formatter = new Intl.NumberFormat('sv-SE', {
     maximumSignificantDigits: MAX_NUMBERS,
 });
 
