@@ -155,6 +155,7 @@ function remove() {
     const numberPos = historyList[i].numberPos;
     isDecimal = historyList[i].isDecimal;
     decimalPos = historyList[i].decimalPos;
+    amountOfNumbers = numberPos;
 
     if (numberPos <= 1) {
         numbers.pop();
