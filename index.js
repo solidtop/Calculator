@@ -96,7 +96,7 @@ function addOperator(operator) {
     if (operator === ',') { //Making next input decimal number
         if (!isDecimal) {
             isDecimal = true;
-            injectToDisplay(','); //Show "," on display temporary
+            injectToDisplay(','); //Show "," on display temporarly
         }
         return;
     } 
